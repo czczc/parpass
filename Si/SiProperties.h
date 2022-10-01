@@ -15,6 +15,7 @@ public:
     
     double Eloss(double mom, double mass, double tcut);
     double ElossVar(double mom, double mass);
+    double MPV(double mom, double mass, double thickness);
 
 
     // Following parameters are for use in Bethe-Bloch formula for dE/dx.

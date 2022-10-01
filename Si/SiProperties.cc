@@ -114,6 +114,49 @@ double SiProperties::ElossVar(double mom, double mass)
 }
 
 
+//----------------------------------------------------------------------------------
+// Most probable energy loss (dE/dx) in units of MeV/cm.
+//
+// Arguments:
+//
+// mom  - Momentum of incident particle in GeV/c.
+// mass - Mass of incident particle in GeV/c^2.
+// thickness - thickness of material in cm.
+//----------------------------------------------------------------------------------
+double SiProperties::MPV(double mom, double mass, double thickness)
+{
+    // Some constants.
+    double K = 0.307075;     // 4 pi N_A r_e^2 m_e c^2 (MeV cm^2/mol).
+    double me = 0.510998918; // Electron mass (MeV/c^2).
+
+    // Calculate kinematic quantities.
+    double bg = mom / mass;           // beta*gamma.
+    double gamma = sqrt(1. + bg*bg);  // gamma.
+    double beta = bg / gamma;         // beta (velocity).
+    double mer = 0.001 * me / mass;   // electron mass / mass of incident particle.
+
+    // Calculate density effect correction (delta).
+    double x = log10(bg);
+    double delta = 0.;
+    if(x >= fSx0) {
+        delta = 2. * log(10.) * x - fScbar;
+        if(x < fSx1) {
+            delta += fSa * pow(fSx1 - x, fSk);
+        }
+    }
+
+    // Calculate MPV
+    double zeta = K/2 * fZ/fA * thickness*Density()/beta/beta;
+    double mpv = zeta * (
+        log(2.*me*bg*bg/ (1.e-6 * fI))
+        + log(zeta/(1.e-6 * fI))
+        + 0.2 - beta*beta - delta
+    ) / thickness;
+    return mpv; // MeV/cm
+
+}
+
+
 
 
 
@@ -125,5 +168,8 @@ void SiProperties::PrintInfo()
     cout << "        Density [g/cc]: " << Density() << endl;
     cout << "dE/dx MIP mu [MeV/cm]: " << Eloss(0.3633, 0.10565837, 0) << endl;
     cout << " dE Fluctu. [MeV^2/cm]: " << ElossVar(0.3633, 0.10565837) << endl;
+    cout << " MPV for MIP mu at 35 um thickness [MeV/cm]: " << MPV(0.3633, 0.10565837, 35e-4) << endl;
+    cout << " MPV for MIP mu at 120 um thickness [MeV/cm]: " << MPV(0.3633, 0.10565837, 120e-4) << endl;
+    cout << " MPV for MIP mu at 200 um thickness [MeV/cm]: " << MPV(0.3633, 0.10565837, 200e-4) << endl;
 
 }
