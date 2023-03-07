@@ -98,9 +98,9 @@ void plot_range()
     for (int i=1; i<M; i++) {
         e[i] = i * dE;
         r_proton[i] = r_proton[i-1] + f_proton->Eval(e[i]) * dE * 1e4; // um
-          r_kaon[i] =   r_kaon[i-1] +   f_kaon->Eval(e[i]) * dE * 1e4;
-          r_pion[i] =   r_pion[i-1] +   f_pion->Eval(e[i]) * dE * 1e4;
-          r_muon[i] =   r_muon[i-1] +   f_muon->Eval(e[i]) * dE * 1e4;
+	r_kaon[i] =   r_kaon[i-1] +   f_kaon->Eval(e[i]) * dE * 1e4;
+	r_pion[i] =   r_pion[i-1] +   f_pion->Eval(e[i]) * dE * 1e4;
+	r_muon[i] =   r_muon[i-1] +   f_muon->Eval(e[i]) * dE * 1e4;
         // r_proton[i] = range(e[i], f_proton);
         // cout << "proton E: " << e[i] << " , range: " << r_proton[i] << endl;
 
@@ -176,6 +176,12 @@ void plot_range()
     // g2_kaon->SetLineColor(kCyan);
     // g2_kaon->Draw("L,same");
 
+    for (Int_t i=0;i!=M2;i++){
+      dedx_pion[i] /= dedx_mip[i];
+      dedx_muon[i] /= dedx_mip[i];
+      dedx_mip[i] = 1.;
+    }
+    
     TGraph *g2_pion = new TGraph(M2, rx, dedx_pion);
     g2_pion->SetLineWidth(2);
     g2_pion->SetLineColor(kRed);
@@ -198,10 +204,24 @@ void plot_range()
     leg2->AddEntry(g2_muon,   " #mu ~ 0.9#pi", "l");
     leg2->AddEntry(g2_mip, " e ~ MIP", "l");
     leg2->SetFillColor(kWhite);
-    leg2->Draw();
+    
 
-    gPad->SetGridx();
-    gPad->SetGridy();
+    TLine *l1 = new TLine(120,0,120,50);
+    l1->Draw();
+    TLine *l2 = new TLine(240,0,240,50);
+    l2->Draw();
+    TLine *l3 = new TLine(360,0,360,50);
+    l3->Draw();
+    TLine *l4 = new TLine(480,0,480,50);
+    l4->Draw();
+    TLine *l5 = new TLine(600,0,600,50);
+    l5->Draw();
+    TLine *l6 = new TLine(720,0,720,50);
+    l6->Draw();
+
+    leg2->Draw();
+    //gPad->SetGridx();
+    //gPad->SetGridy();
 }
 
 
