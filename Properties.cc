@@ -1,4 +1,5 @@
 #include "Properties.h"
+#include "TMath.h"
 
 #include <iostream>
 using namespace std;
@@ -60,7 +61,7 @@ double Properties::Eloss(double mom, double mass, double tcut)
 
     // Calculate kinematic quantities.
     double bg = mom / mass;           // beta*gamma.
-    double gamma = sqrt(1. + bg*bg);  // gamma.
+    double gamma = TMath::Sqrt(1. + bg*bg);  // gamma.
     double beta = bg / gamma;         // beta (velocity).
     double mer = 0.001 * me / mass;   // electron mass / mass of incident particle.
     double tmax = 2.*me* bg*bg / (1. + 2.*gamma*mer + mer*mer);  // Maximum delta ray energy (MeV).
@@ -68,17 +69,17 @@ double Properties::Eloss(double mom, double mass, double tcut)
     if(tcut == 0. || tcut > tmax) { tcut = tmax; }
 
     // Calculate density effect correction (delta).
-    double x = log10(bg);
+    double x = TMath::Log10(bg);
     double delta = 0.;
     if(x >= fSx0) {
-        delta = 2. * log(10.) * x - fScbar;
+        delta = 2. * TMath::Log(10.) * x - fScbar;
         if(x < fSx1) {
-            delta += fSa * pow(fSx1 - x, fSk);
+            delta += fSa * TMath::Power(fSx1 - x, fSk);
         }
     }
 
     // Calculate stopping number.
-    double B = 0.5 * log(2.*me*bg*bg*tcut / (1.e-12 * fI*fI))
+    double B = 0.5 * TMath::Log(2.*me*bg*bg*tcut / (1.e-12 * fI*fI))
       - 0.5 * beta*beta * (1. + tcut / tmax) - 0.5 * delta;
     // Don't let the stopping number become negative.
     if(B < 1.) B = 1.;
@@ -132,25 +133,25 @@ double Properties::MPV(double mom, double mass, double thickness)
 
     // Calculate kinematic quantities.
     double bg = mom / mass;           // beta*gamma.
-    double gamma = sqrt(1. + bg*bg);  // gamma.
+    double gamma = TMath::Sqrt(1. + bg*bg);  // gamma.
     double beta = bg / gamma;         // beta (velocity).
     double mer = 0.001 * me / mass;   // electron mass / mass of incident particle.
 
     // Calculate density effect correction (delta).
-    double x = log10(bg);
+    double x = TMath::Log10(bg);
     double delta = 0.;
     if(x >= fSx0) {
-        delta = 2. * log(10.) * x - fScbar;
+        delta = 2. * TMath::Log(10.) * x - fScbar;
         if(x < fSx1) {
-            delta += fSa * pow(fSx1 - x, fSk);
+            delta += fSa * TMath::Power(fSx1 - x, fSk);
         }
     }
 
     // Calculate MPV
     double zeta = K/2 * fZ/fA * thickness*Density()/beta/beta;
     double mpv = zeta * (
-        log(2.*me*bg*bg/ (1.e-6 * fI))
-        + log(zeta/(1.e-6 * fI))
+        TMath::Log(2.*me*bg*bg/ (1.e-6 * fI))
+        + TMath::Log(zeta/(1.e-6 * fI))
         + 0.2 - beta*beta - delta
     ) / thickness;
     return mpv; // MeV/cm
@@ -165,17 +166,17 @@ double Properties::FWHM(double mom, double mass)
 
     // Calculate kinematic quantities.
     double bg = mom / mass;           // beta*gamma.
-    double gamma = sqrt(1. + bg*bg);  // gamma.
+    double gamma = TMath::Sqrt(1. + bg*bg);  // gamma.
     double beta = bg / gamma;         // beta (velocity).
     // double mer = 0.001 * me / mass;   // electron mass / mass of incident particle.
 
     // Calculate density effect correction (delta).
-    // double x = log10(bg);
+    // double x = TMath::Log10(bg);
     // double delta = 0.;
     // if(x >= fSx0) {
-    //     delta = 2. * log(10.) * x - fScbar;
+    //     delta = 2. * TMath::Log(10.) * x - fScbar;
     //     if(x < fSx1) {
-    //         delta += fSa * pow(fSx1 - x, fSk);
+    //         delta += fSa * TMath::Power(fSx1 - x, fSk);
     //     }
     // }
 
@@ -216,11 +217,11 @@ void Properties::PrintInfo()
 double Properties::KE(double mom, double mass)
 {
     double bg = mom / mass;           // beta*gamma.
-    double gamma = sqrt(1. + bg*bg);  // gamma.
+    double gamma = TMath::Sqrt(1. + bg*bg);  // gamma.
     return (gamma-1) * mass;  // KE in GeV
 }
 
 double Properties::MOM(double ke, double mass)
 {
-    return sqrt(ke*ke+2*ke*mass);
+    return TMath::Sqrt(ke*ke+2*ke*mass);
 }
