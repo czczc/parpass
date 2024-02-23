@@ -85,7 +85,7 @@ double Properties::Eloss(double mom, double mass, double tcut)
 
     // Calculate dE/dx.
     double dedx = Density() * K*fZ*B / (fA * beta*beta);
-    cout << fZ << ", " << fA << ", " << Density() << endl;
+    // cout << fZ << ", " << fA << ", " << Density() << endl;
     return dedx;   // MeV/cm.
 }
 
